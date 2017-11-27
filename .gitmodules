@@ -1,0 +1,12 @@
+[submodule "ascii_hashtable"]
+	path = ascii_hashtable
+	url = https://github.com/poetsmeniet/ascii_hashtable.git
+[submodule "generic_tcp_client_template"]
+	path = generic_tcp_client_template
+	url = https://github.com/poetsmeniet/generic_tcp_client_template.git
+[submodule "read_config"]
+	path = read_config
+	url = https://github.com/poetsmeniet/read_config.git
+[submodule "generic_unix_tools"]
+	path = generic_unix_tools
+	url = https://github.com/poetsmeniet/generic_unix_tools.git

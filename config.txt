@@ -1,0 +1,4 @@
+serverName irc.geenbs.nl
+serverPort 6665
+nick Abot101
+userName AbotOneOhOne

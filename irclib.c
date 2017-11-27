@@ -178,7 +178,7 @@ extern int getAllChannels(int *clientSocket, chanList *chans, int max)
 
         char respCpy[MAXLEN];
         if(strlen(responses->buffer) > MAXLEN){
-            printf("\n\nTrying to FIT %d into %d will not work. Resonse sz too graet\n\n", strlen(responses->buffer), MAXLEN);
+            printf("\n\nTrying to FIT %zu into %d will not work. Resonse sz too graet\n\n", strlen(responses->buffer), MAXLEN);
             return 1;
         }
         memcpy(respCpy, responses->buffer, strlen(responses->buffer));
@@ -478,7 +478,7 @@ extern int ircLogin(appConfig *ircData, int *clientSocket)
             return 2;
         }else if(strstr(responses->buffer, "Looking up") != NULL){
             //Respond to Checking Ident by sending login data
-            printf("\tLogging in as '%s' len=%d..\n", ircData->nick, strlen(ircData->nick));
+            printf("\tLogging in as '%s' len=%zu..\n", ircData->nick, strlen(ircData->nick));
             char req[86];
 
             //Send Nick
@@ -565,7 +565,7 @@ extern int getChannelsFromFile(chanList *chans, char *fileName)
             int rc = fscanf(fp, "%s", sVal);
 
             if(rc == 0){
-                printf("\tError in '%s', line number %d\n", fileName, lineNr);
+                printf("\tError in '%s', line number %zu\n", fileName, lineNr);
                 return -1;
             }
 

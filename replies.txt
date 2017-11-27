@@ -1,0 +1,4 @@
+9 9 #[private message flag] [repeated msg cnt] [regex] [reply text string] (add new lines to bottom of files)
+1 0 H[A-Z]llo\|\shi\|guten\stag Hi there
+0 0 H[A-Z]llo\|\shi\|guten\stag Hi there
+0 2 .*poop.* Hihi he said 'duty'

@@ -25,10 +25,6 @@ freely, subject to the following restrictions:
 #include <string.h>
 #include <stdlib.h>
 #include <regex.h>
-#include "generic_tcp_client_template/tcp_client.h"
-#include "read_config/config.h"
-#include "generic_unix_tools/generic_unix_tools.h"
-#include "ascii_hashtable/asciiHashMap.h"
 #include "irclib.h"
 #define MAXLEN 80000
 #define RESPBUFSZ 2

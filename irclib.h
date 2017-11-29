@@ -25,6 +25,12 @@ freely, subject to the following restrictions:
 #define MAXREGEXSZ 200
 #define MAXREPLYSZ 500
 
+//Load submodule code
+#include "generic_tcp_client_template/tcp_client.h"
+#include "read_config/config.h"
+#include "generic_unix_tools/generic_unix_tools.h"
+#include "ascii_hashtable/asciiHashMap.h"
+
 //The chanList linked list stores 1 or more channels
 typedef struct chanList{
     char chanName[100];

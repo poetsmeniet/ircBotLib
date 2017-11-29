@@ -24,9 +24,6 @@ freely, subject to the following restrictions:
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "generic_tcp_client_template/tcp_client.h"
-#include "generic_unix_tools/generic_unix_tools.h"
-#include "read_config/config.h"
 #include "irclib.h"
 
 /* This file demonstrates usage */

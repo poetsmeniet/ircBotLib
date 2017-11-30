@@ -499,9 +499,10 @@ extern int ircLogin(appConfig *ircData, int *clientSocket)
             }
         }else{
             //Nothing, just loop
-            free(responses->buffer);
         }
+        free(responses->buffer);
     }
+    free(responses->buffer);
     free(responses);
 
     return 0;

@@ -247,8 +247,8 @@ extern int parseResponses(int *clientSocket, aR *replies, appConfig *config)
             if(regexMatch(quitString, line) == 0){
                     printf("\nDisconnecting as requested\n");
                     freeHashMap(respCnts);
-                    free(responses);
                     free(responses->buffer);
+                    free(responses);
                     return 1;
             }
 
@@ -257,8 +257,8 @@ extern int parseResponses(int *clientSocket, aR *replies, appConfig *config)
                 printf("\tReplying to ping..\n");
                 int rc = sendMessage(clientSocket, "pong\n", 5);
                 if(rc == 0){
-                    free(responses);
                     free(responses->buffer);
+                    free(responses);
                     return 1;
                 }
 
@@ -342,6 +342,8 @@ extern int parseResponses(int *clientSocket, aR *replies, appConfig *config)
             printf("There is an error in your replies configuration\n");
             return 1;
         }
+
+        free(responses->buffer);
     }
 
     free(responses->buffer);

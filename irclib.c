@@ -497,12 +497,12 @@ extern int ircLogin(appConfig *ircData, int *clientSocket)
                 free(responses);
                 return 1;
             }
-            free(responses->buffer);
         }else{
             //Nothing, just loop
             free(responses->buffer);
         }
     }
+    free(responses);
 
     return 0;
 }

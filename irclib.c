@@ -161,6 +161,7 @@ extern int getAllChannels(int *clientSocket, chanList *chans, int max)
     while(1){
         if(chanCnt >= max){
             printf("Max channels reached (%d), breaking off here\n", max);
+            free(responses);
             sleep(3);
             return 0;
         }
@@ -198,14 +199,17 @@ extern int getAllChannels(int *clientSocket, chanList *chans, int max)
                         free(responses);
                         return -2;
                     }
+
                 }
             }
             line = strtok(NULL, "\r\n");
         }
+        
+        free(responses->buffer);
     }
 
     free(responses->buffer);
-
+    free(responses);
     return 0;
 }
 

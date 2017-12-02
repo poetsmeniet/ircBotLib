@@ -131,7 +131,7 @@ void genAutoResponses(aR *replies, char *line, hashMap *respCnts, int *clientSoc
         
             //Send message
             if(strlen(thisReply) > 0){
-                printf("\tComposed response: '%s'", thisReply);
+                printf("\tLine: '%s'\n\tComposed response: '%s'",line , thisReply);
                 int rc = sendMessage(clientSocket, thisReply, strlen(thisReply));
 
                 if(rc == 0){

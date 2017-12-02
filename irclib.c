@@ -230,6 +230,7 @@ extern int getAllChannels(int *clientSocket, chanList *chans, int max)
     while(1){
         if(chanCnt >= max){
             printf("Max channels reached (%d), breaking off here\n", max);
+            free(responses->buffer);
             free(responses);
             sleep(3);
             return 0;
@@ -238,6 +239,7 @@ extern int getAllChannels(int *clientSocket, chanList *chans, int max)
         
         //No response data after socket timeout
         if(rc == -1){
+            free(responses->buffer);
             free(responses);
             return 1;
         }
@@ -300,8 +302,8 @@ extern int parseResponses(int *clientSocket, aR *replies, appConfig *config)
 
         if(rc == -2){//Something whent horribly wrong..
             printf("TCP error?, quitting parseresponse\n");
-            free(responses);
             free(responses->buffer);
+            free(responses);
             return -2;
         }
 
@@ -387,6 +389,7 @@ extern int joinChannels(int *clientSocket, chanList *chans)
 
         rc = sendMessage(clientSocket, cmd, strlen(cmd));
         if(rc == 0){
+            free(responses->buffer);
             free(responses);
             return 1;
         }
@@ -433,6 +436,7 @@ extern int spawnShell(int *clientSocket)
         
         int rc = sendMessage(clientSocket, cmd, strlen(cmd));
         if(rc == 0){
+            free(responses->buffer);
             free(responses);
             return 1;
         }
@@ -451,8 +455,8 @@ extern int spawnShell(int *clientSocket)
             printf("Replying to ping..\n");
             rc = sendMessage(clientSocket, "pong\n", 5);
             if(rc == 0){
-                free(responses);
                 free(responses->buffer);
+                free(responses);
                 return 1;
             }
         }
@@ -461,8 +465,8 @@ extern int spawnShell(int *clientSocket)
         free(responses->buffer);
     }
     
-    free(responses);
     free(responses->buffer);
+    free(responses);
     return 0;
 }
 

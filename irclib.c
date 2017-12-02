@@ -77,7 +77,76 @@ int returnTokenAtIndex(char *line, int index, char *target)
     return 0;
 }
 
-/* Automated replies, triggered by regex
+//Generated automatic responses and delivers msg accordingly
+void genAutoResponses(aR *replies, char *line, hashMap *respCnts, int *clientSocket)
+{
+    int cnt = 0;
+    while(bcmp(replies[cnt].regex, "EOA\0", 4) != 0){
+        if(regexMatch(replies[cnt].regex, line) == 0){
+            int rc2;
+
+            //Retrieve channel name
+            char respChan[100];
+            rc2 = returnTokenAtIndex(line, 2, respChan);
+
+            //Get user name to respond to
+            char respUsr[100];
+            returnUserName(line, respUsr);
+
+            //Compose the private message to user
+            char thisReply[400];
+            thisReply[0] = '\0';
+
+            //Compose private user message
+            if(rc2 == 0 && replies[cnt].privateMsgFlag == 1){
+                printf("\tUser to reply to: '%s'\n", respUsr);
+                sprintf(thisReply, "PRIVMSG %s :%s\n", respUsr, replies[cnt].reply);
+                
+                //Test if repeatMsgCnt has not been depleted
+                if(getValue(respCnts, respUsr, cnt, 0) >= replies[cnt].repeatMsgCnt\
+                        && getValue(respCnts, respUsr, cnt, 1) == cnt){
+                    printf("\t---Suppressing this private user response\n\n");
+                    break;
+                }else{
+                    //Add keys to list (response bookkeeping)
+                    addKey(respCnts, respUsr, cnt, strlen(respUsr));
+                }
+            }
+            
+            //Compose public channel message
+            if(rc2 == 1 && replies[cnt].privateMsgFlag == 0){
+                printf("\tchannel to reply to: '%s'\n", respChan);
+                sprintf(thisReply, "PRIVMSG %s :%s\n", respChan, replies[cnt].reply);
+
+                //Test if repeatMsgCnt has not been depleted
+                if(getValue(respCnts, respChan, cnt, 0) >= replies[cnt].repeatMsgCnt\
+                        && getValue(respCnts, respChan, cnt, 1) == cnt){
+                    printf("\t---Suppressing this channel message\n");
+                    break;
+                }else{
+                    //Add keys to list
+                    addKey(respCnts, respChan, cnt, strlen(respChan));
+                }
+            }
+        
+            //Send message
+            if(strlen(thisReply) > 0){
+                printf("\tComposed response: '%s'", thisReply);
+                int rc = sendMessage(clientSocket, thisReply, strlen(thisReply));
+
+                if(rc == 0){
+                    printf("do some error handling dude\n");
+                }
+                
+                break;
+            }
+        }
+
+        cnt++;
+    }//End of while bcmp of line with replies
+}
+
+/* Gets Automated replies, triggered by regex
  * returns: nr of replies found in file */
 extern int retrieveAutomatedReplies(aR *replies, char *fileName)
 {
@@ -244,6 +313,7 @@ extern int parseResponses(int *clientSocket, aR *replies, appConfig *config)
         respCpy[len] = '\0';
         char *line = strtok(respCpy, "\r\n");
 
+        //Parse each line
         while(line != NULL){
             //Disconnect bot.. if politely asked. Failsafe hardcoded..
             char quitString[100];
@@ -269,75 +339,14 @@ extern int parseResponses(int *clientSocket, aR *replies, appConfig *config)
                 //Continue, dont parse responses
                 break;
             }
-            
+
             //Check all automated responses and reply accordingly
-            int cnt = 0;
-            while(bcmp(replies[cnt].regex, "EOA\0", 4) != 0){
-                if(regexMatch(replies[cnt].regex, line) == 0){
-                    int rc2;
+            genAutoResponses(replies, line, respCnts, clientSocket);
 
-                    //Retrieve channel name
-                    char respChan[100];
-                    rc2 = returnTokenAtIndex(line, 2, respChan);
-
-                    //Get user name to respond to
-                    char respUsr[100];
-                    returnUserName(line, respUsr);
-
-                    //Compose the private message to user
-                    char thisReply[400];
-                    thisReply[0] = '\0';
-
-                    //Compose private user message
-                    if(rc2 == 0 && replies[cnt].privateMsgFlag == 1){
-                        printf("\tUser to reply to: '%s'\n", respUsr);
-                        sprintf(thisReply, "PRIVMSG %s :%s\n", respUsr, replies[cnt].reply);
-                        
-                        //Test if repeatMsgCnt has not been depleted
-                        if(getValue(respCnts, respUsr, cnt, 0) >= replies[cnt].repeatMsgCnt\
-                                && getValue(respCnts, respUsr, cnt, 1) == cnt){
-                            printf("\t---Suppressing this private user response\n\n");
-                            break;
-                        }else{
-                            //Add keys to list (response bookkeeping)
-                            addKey(respCnts, respUsr, cnt, strlen(respUsr));
-                        }
-                    }
-                    
-                    //Compose public channel message
-                    if(rc2 == 1 && replies[cnt].privateMsgFlag == 0){
-                        printf("\tchannel to reply to: '%s'\n", respChan);
-                        sprintf(thisReply, "PRIVMSG %s :%s\n", respChan, replies[cnt].reply);
-
-                        //Test if repeatMsgCnt has not been depleted
-                        if(getValue(respCnts, respChan, cnt, 0) >= replies[cnt].repeatMsgCnt\
-                                && getValue(respCnts, respChan, cnt, 1) == cnt){
-                            printf("\t---Suppressing this channel message\n");
-                            break;
-                        }else{
-                            //Add keys to list
-                            addKey(respCnts, respChan, cnt, strlen(respChan));
-                        }
-                    }
-                
-                    //Send message
-                    if(strlen(thisReply) > 0){
-                        printf("\tComposed response: '%s'", thisReply);
-                        int rc = sendMessage(clientSocket, thisReply, strlen(thisReply));
-
-                        if(rc == 0){
-                            printf("do some error handling dude\n");
-                        }
-                        
-                        break;
-                    }
-                }
-
-                cnt++;
-            }//End of while bcmp of line with replies
-
+            //Get the next line
             line = strtok(NULL, "\r\n");
-        }//End of while line != NULL
+        }
+        //End of while line != NULL
 
         responses->buffer[0] = '\0';
         

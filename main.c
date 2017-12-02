@@ -66,12 +66,12 @@ int main(void)
         return 1;
     }
     
-    //printf("\nRequesting all channels...\n");
-    //size_t max = 100;
-    //if(getAllChannels(&clientSocket, chans, max) == -2){
-    //    printf("Recall getallchans..\n");
-    //    rc = getAllChannels(&clientSocket, chans, max);
-    //}
+    printf("\nRequesting all channels...\n");
+    size_t max = 100;
+    if(getAllChannels(&clientSocket, chans, max) == -2){
+        printf("Recall getallchans..\n");
+        rc = getAllChannels(&clientSocket, chans, max);
+    }
 
     rc = joinChannels(&clientSocket, chans);
 
